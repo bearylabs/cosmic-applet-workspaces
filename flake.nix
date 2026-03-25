@@ -22,6 +22,7 @@
             pkg-config
             cargo-watch
             cargo-edit
+            bash  # Bash explizit hinzufügen
           ];
 
           shellHook = ''
@@ -41,6 +42,11 @@
             echo "  cargo build --release - Release-Build"
             echo "  cargo run            - Applet ausführen"
             echo "  cargo watch          - Auto-Rebuild bei Änderungen"
+          '';
+          
+          # Fish Shell Unterstützung
+          interactiveShellInit = ''
+            set -gx TERM xterm-256color
           '';
         };
       }
