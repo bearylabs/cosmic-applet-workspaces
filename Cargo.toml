@@ -1,0 +1,17 @@
+[package]
+name = "cosmic-applet-workspaces"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"], optional = true }
+tokio = { version = "1", features = ["full"], optional = true }
+zbus = { version = "4.0", optional = true }
+
+[features]
+default = []
+dbus-interface = ["tokio", "zbus", "serde"]
+
+[[bin]]
+name = "cosmic-applet-workspaces"
+path = "src/main.rs"
