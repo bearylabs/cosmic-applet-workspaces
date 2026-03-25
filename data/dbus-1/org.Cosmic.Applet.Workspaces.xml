@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+  "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node name="/org/Cosmic/Applet/Workspaces">
+  <interface name="org.Cosmic.Applet.Workspaces">
+    <method name="GetWorkspaces">
+      <arg type="as" name="workspaces" direction="out"/>
+      <doc>Get list of available workspaces</doc>
+    </method>
+    
+    <method name="SwitchWorkspace">
+      <arg type="u" name="workspace_id" direction="in"/>
+      <arg type="b" name="success" direction="out"/>
+      <doc>Switch to specified workspace</doc>
+    </method>
+    
+    <property name="CurrentWorkspace" type="u" access="read">
+      <doc>Currently active workspace ID</doc>
+    </property>
+    
+    <signal name="WorkspaceChanged">
+      <arg type="u" name="workspace_id"/>
+      <doc>Signal emitted when workspace changes</doc>
+    </signal>
+    
+    <signal name="WorkspacesUpdated">
+      <arg type="as" name="workspaces"/>
+      <doc>Signal emitted when available workspaces change</doc>
+    </signal>
+  </interface>
+  
+  <interface name="org.freedesktop.DBus.Properties">
+    <method name="Get">
+      <arg type="s" name="interface_name" direction="in"/>
+      <arg type="s" name="property_name" direction="in"/>
+      <arg type="v" name="value" direction="out"/>
+    </method>
+    
+    <method name="GetAll">
+      <arg type="s" name="interface_name" direction="in"/>
+      <arg type="a{sv}" name="props" direction="out"/>
+    </method>
+    
+    <method name="Set">
+      <arg type="s" name="interface_name" direction="in"/>
+      <arg type="s" name="property_name" direction="in"/>
+      <arg type="v" name="value" direction="in"/>
+    </method>
+    
+    <signal name="PropertiesChanged">
+      <arg type="s" name="interface_name"/>
+      <arg type="a{sv}" name="changed_properties"/>
+      <arg type="as" name="invalidated_properties"/>
+    </signal>
+  </interface>
+  
+  <interface name="org.freedesktop.DBus.Introspectable">
+    <method name="Introspect">
+      <arg type="s" name="xml_data" direction="out"/>
+    </method>
+  </interface>
+</node>

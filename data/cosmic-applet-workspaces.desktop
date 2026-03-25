@@ -1,0 +1,22 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Numbered Workspaces
+Comment=Switch between numbered workspaces in the panel
+Categories=COSMIC;
+Exec=cosmic-applet-workspaces
+Terminal=false
+Icon=com.system76.CosmicAppletWorkspaces-symbolic
+StartupNotify=true
+NoDisplay=true
+KeywordS=workspace;panel;applet;
+
+# ╔═══════════════════════════════════════════════════════════════════╗
+# ║ CRITICAL: Cosmic Panel Applet Detection Fields                   ║
+# ║ Without these, Cosmic Panel will NOT recognize this as an applet  ║
+# ╚═══════════════════════════════════════════════════════════════════╝
+X-CosmicApplet=true
+X-HostWaylandDisplay=true
+X-CosmicShrinkable=true
+X-OverflowPriority=5
+X-OverflowMinSize=8

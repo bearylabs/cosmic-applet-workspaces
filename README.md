@@ -56,52 +56,131 @@ Applet is ready to be integrated with Cosmic DE.
 
 ### On NixOS with Cosmic DE
 
-#### Step 1: Install Binary
+#### ⚠️ Prerequisites for Cosmic Panel Integration
+
+1. **Binary location**: Must be in `PATH` (e.g., `/usr/bin/` or `~/.local/bin/`)
+2. **Desktop Entry**: Required in `~/.local/share/applications/`
+3. **Cosmic Panel**: Must be running on Wayland
+4. **libcosmic**: Applet must use `cosmic` crate for UI rendering
+
+#### Step 1: Build the Applet with Cosmic Dependencies
 
 ```bash
-# Create applets directory
-mkdir -p ~/.local/share/cosmic/applets/
+# Standard release build (includes Cosmic UI framework)
+cargo build --release
 
-# Copy binary after building
-cp target/release/cosmic-applet-workspaces ~/.local/share/cosmic/applets/
-chmod +x ~/.local/share/cosmic/applets/cosmic-applet-workspaces
+# The binary will be at: target/release/cosmic-applet-workspaces
 ```
 
-#### Step 2: Create Desktop Entry
+#### Step 2: Install Binary to PATH
 
-Create `~/.local/share/applications/com.system.Workspaces.desktop`:
+```bash
+# For user-local installation:
+mkdir -p ~/.local/bin
+cp target/release/cosmic-applet-workspaces ~/.local/bin/
+chmod +x ~/.local/bin/cosmic-applet-workspaces
+
+# For system-wide installation (requires sudo):
+sudo cp target/release/cosmic-applet-workspaces /usr/bin/
+sudo chmod 0755 /usr/bin/cosmic-applet-workspaces
+```
+
+#### Step 3: Create Desktop Entry File (CRITICAL)
+
+Create `~/.local/share/applications/com.system76.CosmicAppletWorkspaces.desktop`:
+
+**⚠️ IMPORTANT: These exact fields are REQUIRED for Cosmic Panel detection:**
 
 ```ini
 [Desktop Entry]
-Name=Workspaces
-Comment=Display current workspace number
+Name=Numbered Workspaces
+Comment=Switch between numbered workspaces in the panel
 Type=Application
-Categories=Utility;
+Exec=cosmic-applet-workspaces
+Terminal=false
+Categories=COSMIC;
+Icon=com.system76.CosmicAppletWorkspaces-symbolic
+StartupNotify=true
+NoDisplay=true
+X-GNOME-UsesNotifications=false
 
-# Cosmic Applet specific
-X-Cosmic-Applet=true
-Exec=%h/.local/share/cosmic/applets/cosmic-applet-workspaces
-Icon=view-grid
-
-StartupNotify=false
-NoDisplay=false
+# Cosmic Panel Applet Specific Fields (MANDATORY)
+X-CosmicApplet=true
+X-HostWaylandDisplay=true
+X-CosmicShrinkable=true
+X-OverflowPriority=5
+X-OverflowMinSize=8
 ```
 
-#### Step 3: Reload Cosmic Panel
+**Field Explanations:**
+- `X-CosmicApplet=true` - **MANDATORY** - Identifies this as a Cosmic Panel Applet
+- `NoDisplay=true` - Hides from application menu (appears only in Panel Settings)
+- `X-HostWaylandDisplay=true` - Passes Wayland display to applet
+- `X-OverflowPriority=5` - Panel priority when space is limited (0-10)
+- `Exec=cosmic-applet-workspaces` - Must be in PATH or full path
+
+#### Step 4: Enable Applet Discovery
 
 ```bash
-# Option 1: Kill and restart the panel
-killall cosmic-panel
+# Update desktop database (if not automatic)
+update-desktop-database ~/.local/share/applications/
 
-# Option 2: Log out and log back in
+# Verify desktop file is readable
+ls -la ~/.local/share/applications/com.system76.CosmicAppletWorkspaces.desktop
 ```
 
-#### Step 4: Add Applet to Panel
+#### Step 5: Restart Cosmic Panel
 
-1. Open **Cosmic Panel Settings**
-2. Navigate to "Applets" or "Add Applets"
-3. Select "Workspaces" from the list
-4. Click to add the applet to your panel
+```bash
+# Method 1: Kill and restart (fastest)
+killall cosmic-panel
+sleep 1
+
+# Method 2: Log out and back in (most reliable)
+# Or reboot the system
+```
+
+#### Step 6: Add Applet to Panel
+
+1. Right-click on **Cosmic Panel** → **Panel Settings**
+2. Click **"Add Applets"** or **"+"** button
+3. Look for **"Numbered Workspaces"** in the applet list
+4. Click to add to panel
+5. Applet appears in panel (may take 1-2 seconds to render)
+
+#### ✅ Verification Checklist
+
+```bash
+# 1. Check if binary is in PATH
+which cosmic-applet-workspaces
+
+# 2. Test binary directly
+cosmic-applet-workspaces  # Should display without errors
+
+# 3. Check desktop file is valid
+file ~/.local/share/applications/com.system76.CosmicAppletWorkspaces.desktop
+
+# 4. Check for Cosmic Panel detection
+grep X-CosmicApplet ~/.local/share/applications/com.system76.CosmicAppletWorkspaces.desktop
+# Output should show: X-CosmicApplet=true
+
+# 5. Monitor panel logs for errors
+journalctl -u cosmic-panel -f  # May not exist on all systems
+
+# 6. Check if panel detects applet
+ls ~/.config/cosmic/com.system76.CosmicPanel/  # Panel configuration
+```
+
+#### 🔴 Common Issues & Solutions
+
+| Issue | Cause | Solution |
+|-------|-------|----------|
+| Applet doesn't appear in Settings | `X-CosmicApplet` missing or wrong | Use exact `X-CosmicApplet=true` |
+| "Applet not found" error | Binary not in PATH | Run with full path in desktop file or add to PATH |
+| Applet crashes on launch | Missing libcosmic dependency | Rebuild with: `cargo build --release` |
+| Panel doesn't detect applet | Desktop file in wrong location | Must be in `~/.local/share/applications/` |
+| Desktop file not scanned | Desktop database not updated | Run: `update-desktop-database ~/.local/share/applications/` |
+| Workspace info not displaying | D-Bus workspace detection failing | Check if workspace manager D-Bus service is running |
 
 ## Project Structure
 

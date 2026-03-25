@@ -1,0 +1,23 @@
+[Unit]
+Description=Cosmic Workspace Applet Service
+Documentation=https://github.com/pop-os/cosmic-applets
+After=graphical-session-init.target
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+Restart=on-failure
+RestartSec=5
+ExecStart=/usr/bin/cosmic-applet-workspaces
+
+# Security settings
+PrivateTmp=yes
+NoNewPrivileges=true
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+Environment="RUST_LOG=cosmic_applet_workspaces=info"
+
+[Install]
+WantedBy=graphical-session.target

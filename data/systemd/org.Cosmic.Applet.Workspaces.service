@@ -1,0 +1,5 @@
+[D-Bus Service]
+Name=org.Cosmic.Applet.Workspaces
+Exec=/usr/bin/cosmic-applet-workspaces
+User=%i
+SystemdService=cosmic-applet-workspaces.service
