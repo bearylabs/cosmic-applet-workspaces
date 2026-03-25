@@ -1,7 +1,5 @@
 #[cfg(feature = "dbus-interface")]
-use zbus::Connection;
-
-#[cfg(feature = "dbus-interface")]
+#[allow(dead_code)]
 pub async fn start_dbus_interface() -> Result<(), Box<dyn std::error::Error>> {
     println!("Starting D-Bus interface...");
     
