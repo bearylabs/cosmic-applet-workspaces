@@ -17,6 +17,7 @@
       in
       {
         devShells.default = pkgs.mkShell {
+          SHELL = "${pkgs.bash}/bin/bash";
           buildInputs = with pkgs; [
             rust-bin.stable.latest.default
             pkg-config
