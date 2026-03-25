@@ -14,74 +14,28 @@
         pkgs = import nixpkgs {
           inherit system overlays;
         };
-        rustToolchain = pkgs.rust-bin.stable.latest.default;
       in
       {
-        packages.default = pkgs.rustPlatform.buildRustPackage {
-          pname = "cosmic-applet-workspaces";
-          version = "0.1.0";
-          src = ./.;
-
-          cargoLock = {
-            lockFile = ./Cargo.lock;
-          };
-
-          nativeBuildInputs = with pkgs; [
-            rustToolchain
-            pkg-config
-          ];
-
-          buildInputs = with pkgs; [
-            glib
-            cairo
-            pango
-            gtk3
-          ];
-
-          meta = with pkgs.lib; {
-            description = "A workspace indicator applet for Cosmic DE";
-            homepage = "https://github.com/yourusername/cosmic-applet";
-            license = licenses.gpl3;
-            maintainers = [ ];
-          };
-        };
-
         devShells.default = pkgs.mkShell {
           buildInputs = with pkgs; [
-            rustToolchain
-            rust-analyzer
+            rust-bin.stable.latest.default
+            pkg-config
             cargo-watch
             cargo-edit
-            cargo-expand
-            pkg-config
-            glib
-            cairo
-            pango
-            gtk3
-            libxkbcommon
-            libwayland
-            wayland-protocols
-            dbus
           ];
 
           shellHook = ''
-            echo "Cosmic Applet Development Environment"
-            echo "======================================="
-            echo "Rust version: $(rustc --version)"
-            echo "Cargo version: $(cargo --version)"
+            echo "🚀 Cosmic Applet Development Environment"
+            echo "=========================================="
+            echo "Rust: $(rustc --version)"
+            echo "Cargo: $(cargo --version)"
             echo ""
-            echo "Available commands:"
-            echo "  cargo build          - Build the project"
-            echo "  cargo build --release - Release build"
-            echo "  cargo run            - Run the applet"
-            echo "  cargo test           - Run tests"
-            echo "  cargo watch          - Watch for changes and rebuild"
+            echo "Befehle:"
+            echo "  cargo build          - Projekt bauen"
+            echo "  cargo build --release - Release-Build"
+            echo "  cargo run            - Applet ausführen"
+            echo "  cargo watch          - Auto-Rebuild bei Änderungen"
           '';
-        };
-
-        apps.default = {
-          type = "app";
-          program = "${self.packages.${system}.default}/bin/cosmic-applet-workspaces";
         };
       }
     );
