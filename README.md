@@ -18,11 +18,13 @@ A modular Rust application that monitors and displays workspace information, des
 ## Building
 
 ### Basic Build
+
 ```bash
 cargo build --release
 ```
 
 ### With D-Bus Support (Linux)
+
 ```bash
 cargo build --release --features dbus-interface
 ```
@@ -36,6 +38,7 @@ The compiled binary will be available at `target/release/cosmic-applet-workspace
 ```
 
 Output:
+
 ```
 Cosmic Workspace Applet - Starting up...
 Current workspace: 0
@@ -48,6 +51,57 @@ Available workspaces:
 
 Applet is ready to be integrated with Cosmic DE.
 ```
+
+## Installation
+
+### On NixOS with Cosmic DE
+
+#### Step 1: Install Binary
+
+```bash
+# Create applets directory
+mkdir -p ~/.local/share/cosmic/applets/
+
+# Copy binary after building
+cp target/release/cosmic-applet-workspaces ~/.local/share/cosmic/applets/
+chmod +x ~/.local/share/cosmic/applets/cosmic-applet-workspaces
+```
+
+#### Step 2: Create Desktop Entry
+
+Create `~/.local/share/applications/com.system.Workspaces.desktop`:
+
+```ini
+[Desktop Entry]
+Name=Workspaces
+Comment=Display current workspace number
+Type=Application
+Categories=Utility;
+
+# Cosmic Applet specific
+X-Cosmic-Applet=true
+Exec=%h/.local/share/cosmic/applets/cosmic-applet-workspaces
+Icon=view-grid
+
+StartupNotify=false
+NoDisplay=false
+```
+
+#### Step 3: Reload Cosmic Panel
+
+```bash
+# Option 1: Kill and restart the panel
+killall cosmic-panel
+
+# Option 2: Log out and log back in
+```
+
+#### Step 4: Add Applet to Panel
+
+1. Open **Cosmic Panel Settings**
+2. Navigate to "Applets" or "Add Applets"
+3. Select "Workspaces" from the list
+4. Click to add the applet to your panel
 
 ## Project Structure
 
@@ -66,10 +120,13 @@ cosmic-applet/
 ## Development
 
 ### Adding New Workspaces
+
 Edit `src/workspace_manager.rs` to add dynamic workspace detection via D-Bus or other methods.
 
 ### Enabling D-Bus Interface
+
 1. Install zbus and tokio dependencies:
+
    ```bash
    cargo add tokio --features full
    cargo add zbus
@@ -103,7 +160,7 @@ Licensed under the GPLv3 - see LICENSE file for details
 ## Contributing
 
 Contributions are welcome! Please ensure:
+
 - Code compiles without warnings
 - Features are well-documented
 - Changes are tested on Linux with Cosmic DE
-
