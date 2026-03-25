@@ -25,6 +25,12 @@
           ];
 
           shellHook = ''
+            # Terminal-Modi konfigurieren
+            export TERM=xterm-256color
+            stty icanon
+            stty echo
+            stty erase ^?
+            
             echo "🚀 Cosmic Applet Development Environment"
             echo "=========================================="
             echo "Rust: $(rustc --version)"
